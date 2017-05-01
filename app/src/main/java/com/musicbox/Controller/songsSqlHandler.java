@@ -13,7 +13,7 @@ import com.musicbox.Model.songItem;
 
 public class songsSqlHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1 ;
-    private static final String DATABASE_NAME = "Playlist.db";
+    private static final String DATABASE_NAME = "MusicBoxPlaylist.db";
     public static final String TABLE_SONGS = "SONGS_TABLE";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TITLE = "title";
