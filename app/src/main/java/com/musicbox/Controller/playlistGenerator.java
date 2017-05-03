@@ -1,16 +1,13 @@
 package com.musicbox.Controller;
 
-import android.Manifest;
+
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.widget.Toast;
+
 
 import com.musicbox.Model.songItem;
 
@@ -20,31 +17,15 @@ import java.util.ArrayList;
  * Created by Jai on 5/1/2017.
  */
 
-public class playlistGenerator {
+public class playlistGenerator extends MainActivity{
+
+
 
     public playlistGenerator(Context context) {
 
         songsSqlHandler sqlActivity;
 
         sqlActivity = new songsSqlHandler(context, null, null, 1);
-
-
-
-        int permission = ContextCompat.checkSelfPermission(context,
-                Manifest.permission.READ_EXTERNAL_STORAGE);
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(context, "Permission to read Ext storage denied", Toast.LENGTH_LONG).show();
-            Log.i("PERMISSION", "Permission to record denied");
-        }
-
-        /*
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(context,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-        }
-        */
 
 
         ArrayList<songItem> songList = new ArrayList<songItem>();
@@ -179,6 +160,7 @@ public class playlistGenerator {
 
         Log.i("RESULT COMING UP: ",songList.toString());
 
+        songsListed = true;
     }
 
     private String milliToMinutes(String duration){

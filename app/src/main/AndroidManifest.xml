@@ -14,9 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/NoActionBar">
-        <activity android:name=".Controller.MainActivity"
+        <activity
+            android:name=".Controller.MainActivity"
             android:noHistory="true">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,7 +25,11 @@
         </activity>
         <activity
             android:name=".View.NowPlaying"
-            android:label="@string/title_activity_now_playing"></activity>
+            android:label="@string/title_activity_now_playing" />
+        <activity
+            android:name=".View.MusicLibrary"
+            android:label="@string/title_activity_music_library"
+            android:theme="@style/NoActionBar"></activity>
     </application>
 
 </manifest>

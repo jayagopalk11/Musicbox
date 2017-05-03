@@ -2,10 +2,14 @@ package com.musicbox.Controller;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.musicbox.Model.songItem;
+
+import java.net.InterfaceAddress;
+import java.util.ArrayList;
 
 /**
  * Created by Jai on 4/30/2017.
@@ -13,7 +17,7 @@ import com.musicbox.Model.songItem;
 
 public class songsSqlHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1 ;
-    private static final String DATABASE_NAME = "MusicBoxPlaylist.db";
+    private static final String DATABASE_NAME = "MusicBoxPlaylist2.db";
     public static final String TABLE_SONGS = "SONGS_TABLE";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TITLE = "title";
@@ -22,6 +26,8 @@ public class songsSqlHandler extends SQLiteOpenHelper {
     public static final String COLUMN_ALBUMART = "albumArt";
     public static final String COLUMN_ALBUMID = "albumId";
     public static final String COLUMN_WEIGHT = "weight";
+    public SQLiteDatabase database = getWritableDatabase();
+
 
     public songsSqlHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
@@ -35,7 +41,7 @@ public class songsSqlHandler extends SQLiteOpenHelper {
                 COLUMN_ARTIST + " TEXT ," +
                 COLUMN_DURATION + " TEXT ," +
                 COLUMN_ALBUMART + " TEXT ," +
-                COLUMN_ALBUMID + " TEXT" +
+                COLUMN_ALBUMID + " TEXT ," +
                 COLUMN_WEIGHT + " TEXT " +
                 ");";
 
@@ -67,6 +73,26 @@ public class songsSqlHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM "+ TABLE_SONGS + " WHERE "+ COLUMN_ID + "=\""+ songItem.getId() + "\"" + " AND "+
                 COLUMN_TITLE + "=\""+ songItem.getTitle() + "\"" );
+    }
+
+    public ArrayList<songItem> getAllSongs(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor;
+        String test = "";
+        ArrayList<songItem> listData = new ArrayList<songItem>();
+        cursor = db.rawQuery("SELECT * from "+TABLE_SONGS+" where 1",null);
+        while (cursor.moveToNext()) {
+            songItem temp = new songItem(cursor.getString(0),cursor.getString(1),cursor.getString(2),
+                    cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getString(6));
+
+            test += cursor.getString(0)+" "+cursor.getString(1)+" "+cursor.getString(2)+" "+
+                    cursor.getString(3) + " \n";
+
+            listData.add(temp);
+            temp = null;
+        }
+        cursor.close();
+        return listData;
     }
 
 }
