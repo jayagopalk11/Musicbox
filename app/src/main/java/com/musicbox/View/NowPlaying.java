@@ -5,6 +5,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.app.Activity;
+import android.provider.ContactsContract;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 
@@ -19,6 +22,10 @@ import java.util.ArrayList;
 public class NowPlaying extends Activity{
 
     public ArrayList<songItem> allSongsList;
+    private ImageButton play;
+    private ImageButton pause;
+    private ImageButton nextSong;
+    private ImageButton prevSong;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,12 +36,21 @@ public class NowPlaying extends Activity{
         sqlActivity = new songsSqlHandler(this, null, null, 1);
         allSongsList = sqlActivity.getAllSongs();
 
-
+        play = (ImageButton)findViewById(R.id.playButton);
+        pause = (ImageButton)findViewById(R.id.pauseButton);
+        nextSong = (ImageButton)findViewById(R.id.nextButton);
+        prevSong = (ImageButton)findViewById(R.id.previousButton);
 
     }
 
+    public void playTrigger(View view){
+        play.setVisibility(View.INVISIBLE);
+        pause.setVisibility(View.VISIBLE);
+    }
 
-
-
+    public void pauseTrigger(View view){
+        play.setVisibility(View.VISIBLE);
+        pause.setVisibility(View.INVISIBLE);
+    }
 
 }

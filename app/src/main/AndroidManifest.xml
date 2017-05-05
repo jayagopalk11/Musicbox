@@ -29,7 +29,12 @@
         <activity
             android:name=".View.MusicLibrary"
             android:label="@string/title_activity_music_library"
-            android:theme="@style/NoActionBar"></activity>
+            android:theme="@style/NoActionBar" />
+
+        <service
+            android:name=".Controller.musicPlayer"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
