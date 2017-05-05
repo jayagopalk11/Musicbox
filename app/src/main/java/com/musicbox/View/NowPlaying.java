@@ -1,10 +1,13 @@
 package com.musicbox.View;
 
+import android.content.ComponentName;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.app.Activity;
+import android.os.IBinder;
 import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.ImageButton;
@@ -12,6 +15,7 @@ import android.widget.TextView;
 
 
 import com.musicbox.Controller.MainActivity;
+import com.musicbox.Controller.MusicPlayerSrvc;
 import com.musicbox.Controller.playlistGenerator;
 import com.musicbox.Controller.songsSqlHandler;
 import com.musicbox.Model.songItem;
@@ -26,6 +30,8 @@ public class NowPlaying extends Activity{
     private ImageButton pause;
     private ImageButton nextSong;
     private ImageButton prevSong;
+    MusicPlayerSrvc playerService;
+    Boolean isBound = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +41,9 @@ public class NowPlaying extends Activity{
         songsSqlHandler sqlActivity;
         sqlActivity = new songsSqlHandler(this, null, null, 1);
         allSongsList = sqlActivity.getAllSongs();
+
+
+
 
         play = (ImageButton)findViewById(R.id.playButton);
         pause = (ImageButton)findViewById(R.id.pauseButton);
@@ -52,5 +61,20 @@ public class NowPlaying extends Activity{
         play.setVisibility(View.VISIBLE);
         pause.setVisibility(View.INVISIBLE);
     }
+
+    private ServiceConnection musicBoxConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            MusicPlayerSrvc.customLocalBinder binder = (MusicPlayerSrvc.customLocalBinder) iBinder;
+            playerService = binder.getService();
+            isBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            isBound = false;
+        }
+    };
+
 
 }

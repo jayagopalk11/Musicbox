@@ -5,23 +5,22 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
-public class musicPlayer extends Service {
+public class MusicPlayerSrvc extends Service {
 
     private final IBinder musicBinder = new customLocalBinder();
 
-    public musicPlayer() {
+    public MusicPlayerSrvc() {
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         return musicBinder;
     }
 
 
     public class customLocalBinder extends Binder{
-        musicPlayer getService(){
-            return musicPlayer.this;
+        public MusicPlayerSrvc getService(){
+            return MusicPlayerSrvc.this;
         }
     }
 
