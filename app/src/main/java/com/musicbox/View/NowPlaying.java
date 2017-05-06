@@ -1,6 +1,8 @@
 package com.musicbox.View;
 
 import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -42,13 +44,13 @@ public class NowPlaying extends Activity{
         sqlActivity = new songsSqlHandler(this, null, null, 1);
         allSongsList = sqlActivity.getAllSongs();
 
-
-
-
         play = (ImageButton)findViewById(R.id.playButton);
         pause = (ImageButton)findViewById(R.id.pauseButton);
         nextSong = (ImageButton)findViewById(R.id.nextButton);
         prevSong = (ImageButton)findViewById(R.id.previousButton);
+
+        Intent musicPlayerSrvc = new Intent(this,MusicPlayerSrvc.class);
+        bindService(musicPlayerSrvc,musicBoxConnection, Context.BIND_AUTO_CREATE);
 
     }
 
