@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.musicbox.Model.songItem;
 
-import java.net.InterfaceAddress;
 import java.util.ArrayList;
 
 /**
@@ -26,6 +25,8 @@ public class songsSqlHandler extends SQLiteOpenHelper {
     public static final String COLUMN_ALBUMART = "albumArt";
     public static final String COLUMN_ALBUMID = "albumId";
     public static final String COLUMN_WEIGHT = "weight";
+    public static final String COLUMN_ALBUM = "album";
+
     public SQLiteDatabase database = getWritableDatabase();
 
 
@@ -42,7 +43,8 @@ public class songsSqlHandler extends SQLiteOpenHelper {
                 COLUMN_DURATION + " TEXT ," +
                 COLUMN_ALBUMART + " TEXT ," +
                 COLUMN_ALBUMID + " TEXT ," +
-                COLUMN_WEIGHT + " TEXT " +
+                COLUMN_WEIGHT + " TEXT ," +
+                COLUMN_ALBUM + " TEXT " +
                 ");";
 
         sqLiteDatabase.execSQL(Query);
@@ -63,6 +65,7 @@ public class songsSqlHandler extends SQLiteOpenHelper {
         values.put(COLUMN_ALBUMART,songItem.getAlbumArt());
         values.put(COLUMN_ALBUMID,songItem.getAlbumId());
         values.put(COLUMN_WEIGHT,songItem.getWeight());
+        values.put(COLUMN_ALBUM, songItem.getAlbum());
         SQLiteDatabase db = getWritableDatabase();
         db.insertOrThrow(TABLE_SONGS, null, values);
 
@@ -83,7 +86,7 @@ public class songsSqlHandler extends SQLiteOpenHelper {
         cursor = db.rawQuery("SELECT * from "+TABLE_SONGS+" where 1",null);
         while (cursor.moveToNext()) {
             songItem temp = new songItem(cursor.getString(0),cursor.getString(1),cursor.getString(2),
-                    cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getString(6));
+                    cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getString(6), cursor.getString(7));
 
             test += cursor.getString(0)+" "+cursor.getString(1)+" "+cursor.getString(2)+" "+
                     cursor.getString(3) + " \n";

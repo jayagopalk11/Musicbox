@@ -42,6 +42,8 @@ public class playlistGenerator extends MainActivity{
             int e = musicCursor.getColumnIndex(MediaStore.Audio.Media.IS_NOTIFICATION);
             int f = musicCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
             int g = musicCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
+            int h = musicCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
+
             Log.i("ALBUM ID: ",String.valueOf(f));
 
 
@@ -56,6 +58,7 @@ public class playlistGenerator extends MainActivity{
                 String albumId = musicCursor.getString(f);
                 String ringtone = musicCursor.getString(d);
                 String notific = musicCursor.getString(e);
+                String album = musicCursor.getString(h);
                 //Log.i("duration",musicCursor.getString(g).toString());
                 String duration =  milliToMinutes((musicCursor.getString(g))!=null?musicCursor.getString(g):"0");
 
@@ -88,10 +91,10 @@ public class playlistGenerator extends MainActivity{
                     Log.i("Song List: ", String.valueOf(id) + " - " + title + " - " + artist);
                     Log.i("Is ringtone: ",ringtone);
 
-                    songList.add(new songItem(title,artist,duration,String.valueOf(id),albumPath,albumId,"0"));
+                    songList.add(new songItem(title,artist,duration,String.valueOf(id),albumPath,albumId,"0", album));
                     Log.i("Songs count: ", String.valueOf(songList.size()));
                     try {
-                        sqlActivity.addSongItem(new songItem(title, artist, duration, String.valueOf(id), albumPath,albumId,"0"));
+                        sqlActivity.addSongItem(new songItem(title, artist, duration, String.valueOf(id), albumPath,albumId,"0", album));
                     }catch (Exception x){
 
                     }
@@ -112,6 +115,7 @@ public class playlistGenerator extends MainActivity{
             int e = musicCursor.getColumnIndex(MediaStore.Audio.Media.IS_NOTIFICATION);
             int f = musicCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
             int g = musicCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
+            int h = musicCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
             Log.i("ALBUM ID: ",String.valueOf(f));
 
             do{
@@ -123,11 +127,12 @@ public class playlistGenerator extends MainActivity{
                 String ringtone = musicCursor.getString(d)!=null?musicCursor.getString(d):"1";
                 String notific = musicCursor.getString(e);
                 String albumPath = "";
+                String album = musicCursor.getString(h);
 
                 if(ringtone.contains("0")&&notific.contains("0")) {
 
                     //album art retriever
-                    Uri myUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
+                    Uri myUri = MediaStore.Audio.Albums.INTERNAL_CONTENT_URI;
                     Cursor myCursor = context.getContentResolver().query(myUri,new String[] {MediaStore.Audio.Albums._ID,
                                     MediaStore.Audio.Albums.ALBUM_ART},
                             MediaStore.Audio.Albums._ID+ "=?",
@@ -146,10 +151,10 @@ public class playlistGenerator extends MainActivity{
 
 
                     Log.i("Song List: ", String.valueOf(id) + " - " + title + " - " + artist);
-                    songList.add(new songItem(title,artist,duration,String.valueOf(id),albumPath,albumId,"0"));
+                    songList.add(new songItem(title,artist,duration,String.valueOf(id),albumPath,albumId,"0", album));
                     Log.i("Songs count: ", String.valueOf(songList.size()));
                     try {
-                        sqlActivity.addSongItem(new songItem(title, artist, duration, String.valueOf(id), albumPath,albumId,"0"));
+                        sqlActivity.addSongItem(new songItem(title, artist, duration, String.valueOf(id), albumPath,albumId,"0", album));
                     }catch (Exception x){
 
                     }

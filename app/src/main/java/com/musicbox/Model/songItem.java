@@ -13,15 +13,20 @@ public class songItem {
     private String albumArt;
     private String albumId;
     private String weight;
+    private String album;
 
-    public songItem(String title, String artist, String duration, String id, String albumArt, String albumId, String weight) {
+
+
+    public songItem(String title, String artist, String duration, String id, String albumArt, String albumId, String weight, String album) {
         this.title = title;
         this.artist = artist;
         this.duration = duration;
+
         this.id = id;
         this.albumArt = albumArt;
         this.albumId = albumId;
         this.weight = weight;
+        this.album = album;
     }
 
     public String getTitle() {
@@ -78,5 +83,13 @@ public class songItem {
 
     public void setWeight(String weight) {
         this.weight = weight;
+    }
+
+    public String getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(String album) {
+        this.album = album;
     }
 }
