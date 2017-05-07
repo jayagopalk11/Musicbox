@@ -78,5 +78,9 @@ public class NowPlaying extends Activity{
         }
     };
 
+    public void openLibrary(View view){
+        Intent lib = new Intent(this,MusicLibrary.class);
+        startActivity(lib);
+    }
 
 }
