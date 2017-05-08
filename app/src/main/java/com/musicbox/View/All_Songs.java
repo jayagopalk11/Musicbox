@@ -25,8 +25,4 @@ public class All_Songs extends Fragment {
     }
 
 
-
-
-
-
 }
