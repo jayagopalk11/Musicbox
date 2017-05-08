@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class songsSqlHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1 ;
-    private static final String DATABASE_NAME = "MusicBoxPlaylist2.db";
+    private static final String DATABASE_NAME = "MusicBoxPlaylist3.db";
     public static final String TABLE_SONGS = "SONGS_TABLE";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TITLE = "title";

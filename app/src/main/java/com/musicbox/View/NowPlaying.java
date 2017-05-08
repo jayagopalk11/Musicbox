@@ -27,13 +27,14 @@ import java.util.ArrayList;
 
 public class NowPlaying extends Activity{
 
-    public ArrayList<songItem> allSongsList;
+    public static ArrayList<songItem> allSongsList;
     private ImageButton play;
     private ImageButton pause;
     private ImageButton nextSong;
     private ImageButton prevSong;
     MusicPlayerSrvc playerService;
     Boolean isBound = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

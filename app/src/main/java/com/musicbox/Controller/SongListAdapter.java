@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.musicbox.Model.songItem;
 import com.musicbox.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,7 +39,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongLi
     public List<songItem> songList;
 
     private LayoutInflater inflater;
-    public SongListAdapter(List<songItem> songList, Context c) {
+    public SongListAdapter(ArrayList<songItem> songList, Context c) {
         this.inflater = LayoutInflater.from(c);
         this.songList = songList;
     }
