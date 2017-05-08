@@ -90,7 +90,7 @@ public class playlistGenerator extends MainActivity{
                     Log.i("ringtone type: ",ringtone.getClass().getName());
                     Log.i("Song List: ", String.valueOf(id) + " - " + title + " - " + artist);
                     Log.i("Is ringtone: ",ringtone);
-
+                    Log.i("ALBUM NAME : >>>>>>>>>>",album);
                     songList.add(new songItem(title,artist,duration,String.valueOf(id),albumPath,albumId,"0", album));
                     Log.i("Songs count: ", String.valueOf(songList.size()));
                     try {

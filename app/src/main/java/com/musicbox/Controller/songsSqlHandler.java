@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class songsSqlHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1 ;
-    private static final String DATABASE_NAME = "MusicBoxPlaylist3.db";
+    private static final String DATABASE_NAME = "MusicBoxPlaylist4.db";
     public static final String TABLE_SONGS = "SONGS_TABLE";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TITLE = "title";
@@ -81,21 +81,42 @@ public class songsSqlHandler extends SQLiteOpenHelper {
     public ArrayList<songItem> getAllSongs(){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor;
-        String test = "";
+        //String test = "";
         ArrayList<songItem> listData = new ArrayList<songItem>();
         cursor = db.rawQuery("SELECT * from "+TABLE_SONGS+" where 1",null);
         while (cursor.moveToNext()) {
             songItem temp = new songItem(cursor.getString(0),cursor.getString(1),cursor.getString(2),
                     cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getString(6), cursor.getString(7));
 
-            test += cursor.getString(0)+" "+cursor.getString(1)+" "+cursor.getString(2)+" "+
-                    cursor.getString(3) + " \n";
+            //test += cursor.getString(0)+" "+cursor.getString(1)+" "+cursor.getString(2)+" "+
+                    //cursor.getString(3) + " \n";
 
             listData.add(temp);
-            temp = null;
+
         }
         cursor.close();
         return listData;
     }
 
+    /*
+    public ArrayList<songItem> getAllAlbums(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor;
+        //String test = "";
+        ArrayList<songItem> listData = new ArrayList<songItem>();
+        cursor = db.rawQuery("SELECT DISTINCT "+COLUMN_ALBUM+" from "+TABLE_SONGS,null);
+        while (cursor.moveToNext()) {
+            songItem temp = new songItem(cursor.getString(0),cursor.getString(1),cursor.getString(2),
+                    cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getString(6), cursor.getString(7));
+
+            //test += cursor.getString(0)+" "+cursor.getString(1)+" "+cursor.getString(2)+" "+
+                    //cursor.getString(3) + " \n";
+
+            listData.add(temp);
+
+        }
+        cursor.close();
+        return listData;
+    }
+*/
 }

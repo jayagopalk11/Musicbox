@@ -28,6 +28,7 @@ import java.util.ArrayList;
 public class NowPlaying extends Activity{
 
     public static ArrayList<songItem> allSongsList;
+    public static ArrayList<songItem> allAlbumList;
     private ImageButton play;
     private ImageButton pause;
     private ImageButton nextSong;
@@ -44,7 +45,7 @@ public class NowPlaying extends Activity{
         songsSqlHandler sqlActivity;
         sqlActivity = new songsSqlHandler(this, null, null, 1);
         allSongsList = sqlActivity.getAllSongs();
-
+        //allAlbumList = sqlActivity.getAllAlbums();
         play = (ImageButton)findViewById(R.id.playButton);
         pause = (ImageButton)findViewById(R.id.pauseButton);
         nextSong = (ImageButton)findViewById(R.id.nextButton);
