@@ -5,7 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
+import com.musicbox.Model.albumArtistItem;
 import com.musicbox.Model.songItem;
 
 import java.util.ArrayList;
@@ -98,16 +100,20 @@ public class songsSqlHandler extends SQLiteOpenHelper {
         return listData;
     }
 
-    /*
-    public ArrayList<songItem> getAllAlbums(){
+
+    public ArrayList<albumArtistItem> getAllAlbums(){
+        //public ArrayList<albumArtistItem> getAllAlbums(){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor;
         //String test = "";
-        ArrayList<songItem> listData = new ArrayList<songItem>();
-        cursor = db.rawQuery("SELECT DISTINCT "+COLUMN_ALBUM+" from "+TABLE_SONGS,null);
+        ArrayList<albumArtistItem> listData = new ArrayList<>();
+        cursor = db.rawQuery("SELECT "+COLUMN_ALBUM+", COUNT(*) AS 'count' from "+TABLE_SONGS+" GROUP BY "+COLUMN_ALBUM,null);
         while (cursor.moveToNext()) {
-            songItem temp = new songItem(cursor.getString(0),cursor.getString(1),cursor.getString(2),
-                    cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getString(6), cursor.getString(7));
+            Log.i("LOGGER0",cursor.getString(0));
+            Log.i("LOGGER1",cursor.getString(1));
+
+
+            albumArtistItem temp = new albumArtistItem(String.valueOf(cursor.getString(0)),String.valueOf(cursor.getString(1)));
 
             //test += cursor.getString(0)+" "+cursor.getString(1)+" "+cursor.getString(2)+" "+
                     //cursor.getString(3) + " \n";
@@ -117,6 +123,7 @@ public class songsSqlHandler extends SQLiteOpenHelper {
         }
         cursor.close();
         return listData;
+
     }
-*/
+
 }

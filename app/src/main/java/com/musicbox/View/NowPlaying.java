@@ -4,22 +4,16 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.IBinder;
-import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 
-import com.musicbox.Controller.MainActivity;
 import com.musicbox.Controller.MusicPlayerSrvc;
-import com.musicbox.Controller.playlistGenerator;
 import com.musicbox.Controller.songsSqlHandler;
+import com.musicbox.Model.albumArtistItem;
 import com.musicbox.Model.songItem;
 import com.musicbox.R;
 
@@ -28,7 +22,7 @@ import java.util.ArrayList;
 public class NowPlaying extends Activity{
 
     public static ArrayList<songItem> allSongsList;
-    public static ArrayList<songItem> allAlbumList;
+    public static ArrayList<albumArtistItem> allAlbumList;
     private ImageButton play;
     private ImageButton pause;
     private ImageButton nextSong;
@@ -45,7 +39,7 @@ public class NowPlaying extends Activity{
         songsSqlHandler sqlActivity;
         sqlActivity = new songsSqlHandler(this, null, null, 1);
         allSongsList = sqlActivity.getAllSongs();
-        //allAlbumList = sqlActivity.getAllAlbums();
+        allAlbumList = sqlActivity.getAllAlbums();
         play = (ImageButton)findViewById(R.id.playButton);
         pause = (ImageButton)findViewById(R.id.pauseButton);
         nextSong = (ImageButton)findViewById(R.id.nextButton);
