@@ -1,32 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/tools"
     android:id="@+id/alb_art_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/buttonDots"
-        android:layout_width="37dp"
-        android:layout_height="37dp"
-        android:src="@drawable/dotSwitch" />
-
-    <TextView
-        android:id="@+id/itemName"
+    <android.support.v7.widget.CardView
+        android:id="@+id/cardItem"
         android:layout_width="match_parent"
-        android:layout_height="25dp"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/buttonDots"
-        android:text="Album/Artist"
-        android:textSize="15dp" />
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        card_view:cardCornerRadius="4dp">
 
-    <TextView
-        android:id="@+id/songsCount"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/itemName"
-        android:layout_toEndOf="@+id/buttonDots"
-        android:text="5 Songs" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/albArt"
+                android:layout_width="175dp"
+                android:layout_height="175dp"
+                app:srcCompat="@drawable/music"
+                android:scaleType="fitXY"
+                />
+
+            <TextView
+                android:id="@+id/itemName"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:layout_below="@+id/albArt"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Album/Artist"
+                android:textSize="15dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/songsCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5 Songs"
+                android:layout_below="@+id/itemName"
+                android:ellipsize="end"
+                android:maxLines="1"
+                 />
+
+
+
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
 </RelativeLayout>

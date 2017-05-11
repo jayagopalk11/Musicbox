@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class songsSqlHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1 ;
-    private static final String DATABASE_NAME = "MusicBoxPlaylist4.db";
+    private static final String DATABASE_NAME = "MusicBoxPlaylist5.db";
     public static final String TABLE_SONGS = "SONGS_TABLE";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TITLE = "title";
@@ -107,16 +107,41 @@ public class songsSqlHandler extends SQLiteOpenHelper {
         Cursor cursor;
         //String test = "";
         ArrayList<albumArtistItem> listData = new ArrayList<>();
-        cursor = db.rawQuery("SELECT "+COLUMN_ALBUM+", COUNT(*) AS 'count' from "+TABLE_SONGS+" GROUP BY "+COLUMN_ALBUM,null);
+        cursor = db.rawQuery("SELECT "+COLUMN_ALBUM+", COUNT(*) AS 'count' , "+COLUMN_ALBUMART+" from "+TABLE_SONGS+" GROUP BY "+COLUMN_ALBUM,null);
         while (cursor.moveToNext()) {
             Log.i("LOGGER0",cursor.getString(0));
             Log.i("LOGGER1",cursor.getString(1));
 
 
-            albumArtistItem temp = new albumArtistItem(String.valueOf(cursor.getString(0)),String.valueOf(cursor.getString(1)));
+            albumArtistItem temp = new albumArtistItem(String.valueOf(cursor.getString(0)),String.valueOf(cursor.getString(1)),
+                    String.valueOf(cursor.getString(2)));
 
             //test += cursor.getString(0)+" "+cursor.getString(1)+" "+cursor.getString(2)+" "+
                     //cursor.getString(3) + " \n";
+
+            listData.add(temp);
+
+        }
+        cursor.close();
+        return listData;
+
+    }
+
+    public ArrayList<albumArtistItem> getAllArtists(){
+        //public ArrayList<albumArtistItem> getAllAlbums(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor;
+        //String test = "";
+        ArrayList<albumArtistItem> listData = new ArrayList<>();
+        cursor = db.rawQuery("SELECT DISTINCT "+COLUMN_ARTIST+", COUNT(*) AS 'count' , "+COLUMN_ALBUMART+" from "+TABLE_SONGS+" GROUP BY "+COLUMN_ALBUM,null);
+        while (cursor.moveToNext()) {
+
+
+            albumArtistItem temp = new albumArtistItem(String.valueOf(cursor.getString(0)),String.valueOf(cursor.getString(1)),
+                    String.valueOf(cursor.getString(2)));
+
+            //test += cursor.getString(0)+" "+cursor.getString(1)+" "+cursor.getString(2)+" "+
+            //cursor.getString(3) + " \n";
 
             listData.add(temp);
 

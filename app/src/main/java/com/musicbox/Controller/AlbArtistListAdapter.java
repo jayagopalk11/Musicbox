@@ -1,10 +1,13 @@
 package com.musicbox.Controller;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.musicbox.Model.albumArtistItem;
@@ -52,6 +55,20 @@ public class AlbArtistListAdapter extends RecyclerView.Adapter<AlbArtistListAdap
         albumArtistItem a = itemList.get(position);
         holder.itemName.setText(a.getAlbumName());
         holder.songsCount.setText(a.getSongsInAlbum()+" Song(s)");
+
+        if(a.getAlbumArt() != null) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 2;
+            //Bitmap bitmap = BitmapFactory.decodeByteArray(value.arr, 0, value.arr.length, options);
+            Bitmap bitmap = BitmapFactory.decodeFile(a.getAlbumArt(), options);
+
+            holder.albumArt.setImageBitmap(bitmap);
+        }
+        else{
+            holder.albumArt.setImageResource(R.drawable.music);
+        }
+
+
     }
 
     @Override
@@ -63,10 +80,12 @@ public class AlbArtistListAdapter extends RecyclerView.Adapter<AlbArtistListAdap
 
         public TextView itemName;
         public TextView songsCount;
+        public ImageView albumArt;
         public View container;
 
         public AlbArtistHolder(View itemView) {
             super(itemView);
+            albumArt = (ImageView)itemView.findViewById(R.id.albArt);
             itemName = (TextView)itemView.findViewById(R.id.itemName);
             songsCount = (TextView)itemView.findViewById(R.id.songsCount);
             container = itemView.findViewById(R.id.alb_art_root);

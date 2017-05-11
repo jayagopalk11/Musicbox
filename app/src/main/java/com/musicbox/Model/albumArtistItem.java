@@ -8,10 +8,12 @@ public class albumArtistItem {
 
     String albumName;
     String songsInAlbum;
+    String albumArt;
 
-    public albumArtistItem(String albumName, String songsInAlbum) {
+    public albumArtistItem(String albumName, String songsInAlbum, String albumArt) {
         this.albumName = albumName;
         this.songsInAlbum = songsInAlbum;
+        this.albumArt = albumArt;
     }
 
     public String getAlbumName() {
@@ -28,5 +30,13 @@ public class albumArtistItem {
 
     public void setSongsInAlbum(String songsInAlbum) {
         this.songsInAlbum = songsInAlbum;
+    }
+
+    public String getAlbumArt() {
+        return albumArt;
+    }
+
+    public void setAlbumArt(String albumArt) {
+        this.albumArt = albumArt;
     }
 }

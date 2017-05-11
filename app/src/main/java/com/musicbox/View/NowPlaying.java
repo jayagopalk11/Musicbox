@@ -23,6 +23,8 @@ public class NowPlaying extends Activity{
 
     public static ArrayList<songItem> allSongsList;
     public static ArrayList<albumArtistItem> allAlbumList;
+    public static ArrayList<albumArtistItem> allArtistList;
+
     private ImageButton play;
     private ImageButton pause;
     private ImageButton nextSong;
@@ -40,6 +42,7 @@ public class NowPlaying extends Activity{
         sqlActivity = new songsSqlHandler(this, null, null, 1);
         allSongsList = sqlActivity.getAllSongs();
         allAlbumList = sqlActivity.getAllAlbums();
+        allArtistList = sqlActivity.getAllArtists();
         play = (ImageButton)findViewById(R.id.playButton);
         pause = (ImageButton)findViewById(R.id.pauseButton);
         nextSong = (ImageButton)findViewById(R.id.nextButton);
