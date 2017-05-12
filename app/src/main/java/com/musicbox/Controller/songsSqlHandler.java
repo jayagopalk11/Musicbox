@@ -19,15 +19,15 @@ import java.util.ArrayList;
 public class songsSqlHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1 ;
     private static final String DATABASE_NAME = "MusicBoxPlaylist5.db";
-    public static final String TABLE_SONGS = "SONGS_TABLE";
-    public static final String COLUMN_ID = "_id";
-    public static final String COLUMN_TITLE = "title";
-    public static final String COLUMN_ARTIST = "artist";
-    public static final String COLUMN_DURATION = "duration";
-    public static final String COLUMN_ALBUMART = "albumArt";
-    public static final String COLUMN_ALBUMID = "albumId";
-    public static final String COLUMN_WEIGHT = "weight";
-    public static final String COLUMN_ALBUM = "album";
+    private static final String TABLE_SONGS = "SONGS_TABLE";
+    private static final String COLUMN_ID = "_id";
+    private static final String COLUMN_TITLE = "title";
+    private static final String COLUMN_ARTIST = "artist";
+    private static final String COLUMN_DURATION = "duration";
+    private static final String COLUMN_ALBUMART = "albumArt";
+    private static final String COLUMN_ALBUMID = "albumId";
+    private static final String COLUMN_WEIGHT = "weight";
+    private static final String COLUMN_ALBUM = "album";
 
     public SQLiteDatabase database = getWritableDatabase();
 
@@ -133,7 +133,8 @@ public class songsSqlHandler extends SQLiteOpenHelper {
         Cursor cursor;
         //String test = "";
         ArrayList<albumArtistItem> listData = new ArrayList<>();
-        cursor = db.rawQuery("SELECT DISTINCT "+COLUMN_ARTIST+", COUNT(*) AS 'count' , "+COLUMN_ALBUMART+" from "+TABLE_SONGS+" GROUP BY "+COLUMN_ALBUM,null);
+        cursor = db.rawQuery("SELECT DISTINCT "+COLUMN_ARTIST+", COUNT(*) AS 'count' , "+COLUMN_ALBUMART+" from "+TABLE_SONGS+" GROUP BY "+COLUMN_ARTIST,null);
+        //cursor = db.rawQuery("SELECT COUNT (DISTINCT "+COLUMN_ARTIST+"), "+COLUMN_ARTIST+" , "+COLUMN_ALBUMART+" from "+TABLE_SONGS+" GROUP BY "+COLUMN_ARTIST,null);
         while (cursor.moveToNext()) {
 
 
