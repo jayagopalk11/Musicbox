@@ -16,8 +16,8 @@ import java.util.ArrayList;
 /**
  * Created by Jai on 5/1/2017.
  */
-
-public class playlistGenerator extends MainActivity{
+//extends MainActivity
+public class playlistGenerator {
 
 
 
@@ -165,7 +165,7 @@ public class playlistGenerator extends MainActivity{
 
         Log.i("RESULT COMING UP: ",songList.toString());
 
-        songsListed = true;
+        MainActivity.songsListed = true;
     }
 
     private String milliToMinutes(String duration){
