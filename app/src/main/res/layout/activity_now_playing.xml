@@ -125,4 +125,24 @@
         android:layout_centerHorizontal="true"
         android:text="Album" />
 
+    <TextView
+        android:id="@+id/runTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:textColor="#FFFFFF"
+        android:layout_below="@+id/albumArtImg"
+        android:layout_marginStart="16dp"
+        android:text="00:00" />
+
+    <TextView
+        android:id="@+id/leftTime"
+        android:textColor="#FFFFFF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        android:layout_marginEnd="16dp"
+        android:layout_below="@+id/albumArtImg"
+        android:layout_alignEnd="@+id/library" />
+
 </RelativeLayout>
