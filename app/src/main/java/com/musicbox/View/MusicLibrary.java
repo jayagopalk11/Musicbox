@@ -67,7 +67,7 @@ public class MusicLibrary extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Library would be updated shortly...", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });

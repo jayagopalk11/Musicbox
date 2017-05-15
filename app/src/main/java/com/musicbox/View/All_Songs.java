@@ -11,10 +11,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.musicbox.Controller.MainActivity;
 import com.musicbox.Controller.SongListAdapter;
 import com.musicbox.Controller.songsSqlHandler;
+import com.musicbox.Model.songItem;
 import com.musicbox.R;
 
 import java.util.ArrayList;
@@ -50,11 +52,13 @@ public class All_Songs extends Fragment implements SongListAdapter.ItemClickCall
 
     @Override
     public void onImageClick(int p) {
-
+        songItem i = NowPlaying.allSongsList.get(p);
+        Toast.makeText(getContext(),i.getId(),Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onItemClick(int p) {
-
+        songItem i = NowPlaying.allSongsList.get(p);
+        Toast.makeText(getContext(),i.getId(),Toast.LENGTH_SHORT).show();
     }
 }

@@ -89,6 +89,25 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongLi
             songName = (TextView)itemView.findViewById(R.id.songName);
             albumArt = (ImageView) itemView.findViewById(R.id.songAlbumArt);
             container = itemView.findViewById(R.id.song_root);
+
+            albumArt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ItemClickCallback.onImageClick(getAdapterPosition());
+                }
+            });
+
+            container.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ItemClickCallback.onItemClick(getAdapterPosition());
+                }
+            });
+
         }
+
+
     }
+
+
 }

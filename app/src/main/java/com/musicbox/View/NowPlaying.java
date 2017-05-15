@@ -1,6 +1,7 @@
 package com.musicbox.View;
 
 import android.content.ComponentName;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -12,13 +13,16 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -31,19 +35,28 @@ import com.musicbox.R;
 
 import java.util.ArrayList;
 
+
+
 public class NowPlaying extends Activity{
 
     public static ArrayList<songItem> allSongsList;
     public static ArrayList<albumArtistItem> allAlbumList;
     public static ArrayList<albumArtistItem> allArtistList;
 
+
+
     private ImageButton play;
     private ImageButton pause;
     private ImageButton nextSong;
     private ImageButton prevSong;
+    private TextView songName;
+    private TextView albumName;
     MusicPlayerSrvc playerService;
     Boolean isBound = false;
     public CircularSeek seeker;
+    public MusicPlayerSrvc musicPlayerService;
+    public ImageView myImage;
+    private boolean success = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,15 +68,19 @@ public class NowPlaying extends Activity{
         allSongsList = sqlActivity.getAllSongs();
         allAlbumList = sqlActivity.getAllAlbums();
         allArtistList = sqlActivity.getAllArtists();
+        songName = (TextView)findViewById(R.id.songName);
+        albumName = (TextView)findViewById(R.id.albumName);
         play = (ImageButton)findViewById(R.id.playButton);
         pause = (ImageButton)findViewById(R.id.pauseButton);
         nextSong = (ImageButton)findViewById(R.id.nextButton);
         prevSong = (ImageButton)findViewById(R.id.previousButton);
 
+
+
         Intent musicPlayerSrvc = new Intent(this,MusicPlayerSrvc.class);
         bindService(musicPlayerSrvc,musicBoxConnection, Context.BIND_AUTO_CREATE);
 
-        ImageView myImage = (ImageView) findViewById(R.id.albumArtImg);
+        myImage = (ImageView) findViewById(R.id.albumArtImg);
 
         Bitmap image = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.music_image);
 
@@ -140,12 +157,34 @@ public class NowPlaying extends Activity{
         pause.setVisibility(View.INVISIBLE);
     }
 
-    private ServiceConnection musicBoxConnection = new ServiceConnection() {
+    ServiceConnection musicBoxConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             MusicPlayerSrvc.customLocalBinder binder = (MusicPlayerSrvc.customLocalBinder) iBinder;
-            playerService = binder.getService();
+            musicPlayerService = binder.getService();
             isBound = true;
+
+            isBound = true;
+            Log.i("Binder log: ","Successfully binded");
+            Log.i("play status: ",String.valueOf(musicPlayerService.isPlaying()));
+            if(musicPlayerService.isPlaying()){
+                play.setVisibility(View.INVISIBLE);
+                pause.setVisibility(View.VISIBLE);
+                seeker.setProgress(musicPlayerService.mp.getCurrentPosition());
+                Toast.makeText(getApplication().getApplicationContext(),String.valueOf(musicPlayerService.mp.getDuration()),Toast.LENGTH_SHORT).show();
+
+            }else{
+                play.setVisibility(View.VISIBLE);
+                pause.setVisibility(View.INVISIBLE);
+
+
+                //playFunction();
+
+            }
+
+            //songName.setText(items[songId].items);
+            //albumName.setText(items[songId].desc);
+            //drawAlbumArt();
         }
 
         @Override
@@ -158,5 +197,49 @@ public class NowPlaying extends Activity{
         Intent lib = new Intent(this,MusicLibrary.class);
         startActivity(lib);
     }
+    /*
+    private void drawAlbumArt(){
+        Bitmap image = BitmapFactory.decodeFile(items[songId].arr);
+        try{
+            if((image.getHeight() > 0)&&(image.getWidth()>0)){
+
+            }
+        }catch (Exception e){
+
+            image = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.music_image);
+
+        }
+
+        try{
+            Bitmap myBitmap = getCircleBitmap(image);
+            myImage.setImageBitmap(myBitmap);
+        }catch (Exception e){
+            Toast.makeText(this,"Unable to set album art",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void playFunction(){
+        try {
+            Uri trackUri = ContentUris.withAppendedId(
+                    android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                    Long.valueOf(items[songId].path));
+
+            musicPlayerService.mp.setDataSource(getApplicationContext(), trackUri);
+            success = true;
+        }catch (Exception e){
+            Log.i("Exception","Exception handled"+e.toString());
+        }
+        if(!success) {
+            try {
+                Uri trackUri = ContentUris.withAppendedId(
+                        MediaStore.Audio.Media.INTERNAL_CONTENT_URI,
+                        Long.valueOf(items[songId].path));
+
+                musicPlayerService.mp.setDataSource(getApplicationContext(), trackUri);
+            } catch (Exception e) {
+                Log.i("Exception", "Exception handled" + e.toString());
+            }
+        }
+    }*/
 
 }
