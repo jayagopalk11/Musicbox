@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         loadingProgress = (ProgressBar) findViewById(R.id.loading);
-        loadingProgress.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+        loadingProgress.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
         loadingProgress.setVisibility(View.VISIBLE);
         loadingProgress.setIndeterminate(true);
 
