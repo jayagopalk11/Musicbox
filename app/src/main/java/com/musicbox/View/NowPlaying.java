@@ -16,7 +16,9 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -43,26 +45,47 @@ public class NowPlaying extends Activity{
     public static ArrayList<albumArtistItem> allAlbumList;
     public static ArrayList<albumArtistItem> allArtistList;
 
+    Intent musicPlayerSrvc;
 
-
-    private ImageButton play;
-    private ImageButton pause;
-    private ImageButton nextSong;
-    private ImageButton prevSong;
-    private TextView songName;
-    private TextView albumName;
+    public static ImageButton play;
+    public static ImageButton pause;
+    public ImageButton nextSong;
+    public ImageButton prevSong;
+    public static TextView songName;
+    public static TextView albumName;
     MusicPlayerSrvc playerService;
     Boolean isBound = false;
     public CircularSeek seeker;
     public MusicPlayerSrvc musicPlayerService;
     public ImageView myImage;
     private boolean success = false;
+    public static songItem wItem;
+    Runnable run;
+    public static TextView runTime;
+    public static TextView leftTime;
+
+    Handler seekHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            /*
+            seeker.setProgress(60);
+
+            //seeker.setProgress(musicPlayerService.mp.getCurrentPosition());
+            Log.i("seekbar", String.valueOf(musicPlayerService.mp.getCurrentPosition()));
+            Log.i("seekbar", "runnable running");
+            runTime.setText(convertMilli(musicPlayerService.mp.getCurrentPosition()));
+
+            leftTime.setText(convertMilli(musicPlayerService.mp.getDuration()-musicPlayerService.mp.getCurrentPosition()));
+            */
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_now_playing);
-
+        //wItem = new songItem(null,null,null,null,null,null,null,null);
         songsSqlHandler sqlActivity;
         sqlActivity = new songsSqlHandler(this, null, null, 1);
         allSongsList = sqlActivity.getAllSongs();
@@ -74,11 +97,13 @@ public class NowPlaying extends Activity{
         pause = (ImageButton)findViewById(R.id.pauseButton);
         nextSong = (ImageButton)findViewById(R.id.nextButton);
         prevSong = (ImageButton)findViewById(R.id.previousButton);
+        runTime = (TextView)findViewById(R.id.runTime);
+        leftTime = (TextView)findViewById(R.id.leftTime);
 
 
-
-        Intent musicPlayerSrvc = new Intent(this,MusicPlayerSrvc.class);
-        bindService(musicPlayerSrvc,musicBoxConnection, Context.BIND_AUTO_CREATE);
+        musicPlayerSrvc = new Intent(this,MusicPlayerSrvc.class);
+        startService(musicPlayerSrvc);
+        bindService(musicPlayerSrvc ,musicBoxConnection, Context.BIND_AUTO_CREATE);
 
         myImage = (ImageView) findViewById(R.id.albumArtImg);
 
@@ -150,11 +175,86 @@ public class NowPlaying extends Activity{
     public void playTrigger(View view){
         play.setVisibility(View.INVISIBLE);
         pause.setVisibility(View.VISIBLE);
+        musicPlayerService.playMusic();
+
+        /*
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("seekbar", "runnable intialised");
+
+                    seekUpdation();
+
+            }
+        });*/
+        Toast.makeText(this,"thread strt",Toast.LENGTH_SHORT).show();
+
+        run = new Runnable() {
+            @Override
+            public void run() {
+                Log.i("seekbar", "runnable intialised");
+
+                seekUpdation();
+            }
+        };
+        seekUpdation();
     }
+
+
+
 
     public void pauseTrigger(View view){
         play.setVisibility(View.VISIBLE);
         pause.setVisibility(View.INVISIBLE);
+        musicPlayerService.pauseMusic();
+    }
+
+
+    public void seekUpdation(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                seeker.setProgress(60);
+                float value = ((float) musicPlayerService.mp.getCurrentPosition()/(float) musicPlayerService.mp.getDuration());
+                //seeker.setProgress(musicPlayerService.mp.getCurrentPosition());
+                Log.i("seekbar now", String.valueOf(musicPlayerService.mp.getCurrentPosition()));
+                Log.i("seekbar total", String.valueOf(musicPlayerService.mp.getDuration()));
+                Log.i("seekbar div", String.valueOf(value));
+
+
+                int progress = (int)(value * 100);
+                Log.i("seekbar", String.valueOf(progress));
+                seeker.setProgress(progress);
+                runTime.setText(convertMilli(musicPlayerService.mp.getCurrentPosition()));
+
+                leftTime.setText(convertMilli(musicPlayerService.mp.getDuration()-musicPlayerService.mp.getCurrentPosition()));
+            }
+        });
+
+        seekHandler.sendEmptyMessage(0);
+        seekHandler.postDelayed(run, 1000);
+    }
+
+    public String convertMilli(int milli){
+        milli = milli / 1000;
+        milli = Math.round(milli);
+
+        int mins = milli/60;
+        int secs = milli%60;
+        String min = "";
+        String sec = "";
+        if((mins/10)<1){
+            min = "0"+String.valueOf(mins);
+        }else{
+            min = String.valueOf(mins);
+        }
+        if((secs/10)<1){
+            sec = "0"+String.valueOf(secs);
+        }else{
+            sec = String.valueOf(secs);
+        }
+
+        return min+":"+sec;
     }
 
     ServiceConnection musicBoxConnection = new ServiceConnection() {
@@ -164,7 +264,6 @@ public class NowPlaying extends Activity{
             musicPlayerService = binder.getService();
             isBound = true;
 
-            isBound = true;
             Log.i("Binder log: ","Successfully binded");
             Log.i("play status: ",String.valueOf(musicPlayerService.isPlaying()));
             if(musicPlayerService.isPlaying()){
@@ -217,12 +316,12 @@ public class NowPlaying extends Activity{
             Toast.makeText(this,"Unable to set album art",Toast.LENGTH_SHORT).show();
         }
     }
-
+        */
     public void playFunction(){
         try {
             Uri trackUri = ContentUris.withAppendedId(
                     android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                    Long.valueOf(items[songId].path));
+                    Long.valueOf(wItem.getId()));
 
             musicPlayerService.mp.setDataSource(getApplicationContext(), trackUri);
             success = true;
@@ -233,13 +332,27 @@ public class NowPlaying extends Activity{
             try {
                 Uri trackUri = ContentUris.withAppendedId(
                         MediaStore.Audio.Media.INTERNAL_CONTENT_URI,
-                        Long.valueOf(items[songId].path));
+                        Long.valueOf(wItem.getId()));
 
                 musicPlayerService.mp.setDataSource(getApplicationContext(), trackUri);
             } catch (Exception e) {
                 Log.i("Exception", "Exception handled" + e.toString());
             }
         }
-    }*/
+    }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(musicBoxConnection);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        musicPlayerSrvc = new Intent(this,MusicPlayerSrvc.class);
+        bindService(musicPlayerSrvc ,musicBoxConnection, Context.BIND_AUTO_CREATE);
+    }
 }

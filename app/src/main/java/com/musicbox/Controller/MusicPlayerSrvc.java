@@ -6,14 +6,17 @@ import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
+
+import com.musicbox.View.NowPlaying;
 
 import java.io.IOException;
 
 public class MusicPlayerSrvc extends Service {
     public MediaPlayer mp = new MediaPlayer();
-    boolean isPlaying=false;
-    boolean isPaused = false;
+    public boolean isPlaying=false;
+    public boolean isPaused = false;
     private final IBinder musicBinder = new customLocalBinder();
 
     public MusicPlayerSrvc() {
@@ -50,6 +53,9 @@ public class MusicPlayerSrvc extends Service {
         Toast.makeText(getApplication().getApplicationContext(),String.valueOf(mp.getDuration()),Toast.LENGTH_SHORT).show();
         Log.i("TAG", "mp started");
         isPlaying = true;
+        NowPlaying.play.setVisibility(View.INVISIBLE);
+        NowPlaying.pause.setVisibility(View.VISIBLE);
+
     }
 
     public void pauseMusic(){
@@ -59,6 +65,9 @@ public class MusicPlayerSrvc extends Service {
             Log.i("TAG", "mp paused");
             isPlaying=false;
             isPaused=true;
+
+            NowPlaying.play.setVisibility(View.VISIBLE);
+            NowPlaying.pause.setVisibility(View.INVISIBLE);
         }
 
     }
@@ -77,7 +86,7 @@ public class MusicPlayerSrvc extends Service {
     }
 
     public boolean isPlaying(){
-        return mp.isPlaying();
+        return isPlaying;
     }
 
 }

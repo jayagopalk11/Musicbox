@@ -137,7 +137,7 @@ public class songsSqlHandler extends SQLiteOpenHelper {
         //cursor = db.rawQuery("SELECT COUNT (DISTINCT "+COLUMN_ARTIST+"), "+COLUMN_ARTIST+" , "+COLUMN_ALBUMART+" from "+TABLE_SONGS+" GROUP BY "+COLUMN_ARTIST,null);
         while (cursor.moveToNext()) {
 
-
+            Log.i("LOGGER11111",cursor.getString(1));
             albumArtistItem temp = new albumArtistItem(String.valueOf(cursor.getString(0)),String.valueOf(cursor.getString(1)),
                     String.valueOf(cursor.getString(2)));
 

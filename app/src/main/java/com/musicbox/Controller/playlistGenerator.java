@@ -94,7 +94,7 @@ public class playlistGenerator {
                     songList.add(new songItem(title,artist,duration,String.valueOf(id),albumPath,albumId,"0", album));
                     Log.i("Songs count: ", String.valueOf(songList.size()));
                     try {
-                        sqlActivity.addSongItem(new songItem(title, artist, duration, String.valueOf(id), albumPath,albumId,"0", album));
+                        sqlActivity.addSongItem(new songItem(String.valueOf(id),title, artist, duration, albumPath,albumId,"0", album));
                     }catch (Exception x){
 
                     }

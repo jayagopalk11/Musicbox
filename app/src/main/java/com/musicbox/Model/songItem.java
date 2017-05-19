@@ -17,7 +17,7 @@ public class songItem {
 
 
 
-    public songItem(String id, String title, String artist, String duration, String albumArt, String albumId, String weight, String album) {
+    public songItem( String id, String title, String artist, String duration, String albumArt, String albumId, String weight, String album) {
         this.title = title;
         this.artist = artist;
         this.duration = duration;
