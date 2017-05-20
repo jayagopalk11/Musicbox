@@ -39,7 +39,6 @@ import com.musicbox.R;
 import java.util.ArrayList;
 
 
-
 public class NowPlaying extends Activity{
 
 
@@ -73,7 +72,7 @@ public class NowPlaying extends Activity{
     public static TextView runTime;
     public static TextView leftTime;
     public boolean initialLoad;
-
+    public static int mySongIndex;
 
 
     Handler seekHandler = new Handler(){
@@ -82,7 +81,6 @@ public class NowPlaying extends Activity{
 
         }
     };
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,8 +108,13 @@ public class NowPlaying extends Activity{
         String songId = sharedPreferences.getString("songIndex","");
         Log.i("SHAREPREF>>>>>>>>>>>>",songId);
         if(!songId.equals("")) {
-            wItem = sqlActivity.getSongItem(songId);
+
+            mySongIndex = getCategoryPos(songId);
+            Log.i("song index ",String.valueOf(mySongIndex));
+            wItem = allSongsList.get(mySongIndex);
+            //wItem = sqlActivity.getSongItem(songId);
         }else{
+            mySongIndex = 0;
             wItem = sqlActivity.getFirstSong();
         }
         songName.setText(wItem.getTitle());
@@ -138,25 +141,26 @@ public class NowPlaying extends Activity{
         seeker.setOnSeekArcChangeListener(new CircularSeek.OnCircleSeekChangeListener() {
             @Override
             public void onProgressChanged(CircularSeek seeker, int progress, boolean fromUser) {
-                Log.i("Progress ###",String.valueOf(progress));
+                //Log.i("Progress ###",String.valueOf(progress));
                 if(fromUser) {
-
-                    int curDuration = musicPlayerService.mp.getDuration();
-                    Log.i("CurrentDuration",String.valueOf(curDuration));
-                    int val = (curDuration/1000)*progress;
-                    Log.i("ProgressVal",String.valueOf(val));
-                    if(musicPlayerService.mp.isPlaying()) {
-                        musicPlayerService.mp.pause();
-                        musicPlayerService.mp.seekTo(val);
-                        musicPlayerService.mp.start();
-                        play.setVisibility(View.INVISIBLE);
-                        pause.setVisibility(View.VISIBLE);
-                    }else{
-                        musicPlayerService.mp.pause();
-                        musicPlayerService.mp.seekTo(val);
-                        play.setVisibility(View.VISIBLE);
-                        pause.setVisibility(View.INVISIBLE);
-                    }
+                    //if(musicPlayerService.mp.isPlaying()){
+                        int curDuration = musicPlayerService.mp.getDuration();
+                        Log.i("CurrentDuration",String.valueOf(curDuration));
+                        int val = (curDuration/1000)*progress;
+                        Log.i("ProgressVal",String.valueOf(val));
+                        if(musicPlayerService.mp.isPlaying()) {
+                            musicPlayerService.mp.pause();
+                            musicPlayerService.mp.seekTo(val);
+                            musicPlayerService.mp.start();
+                            play.setVisibility(View.INVISIBLE);
+                            pause.setVisibility(View.VISIBLE);
+                        }else{
+                            musicPlayerService.mp.pause();
+                            musicPlayerService.mp.seekTo(val);
+                            play.setVisibility(View.VISIBLE);
+                            pause.setVisibility(View.INVISIBLE);
+                        }
+                    //}
                 }
             }
 
@@ -223,18 +227,13 @@ public class NowPlaying extends Activity{
         return output;
     }
 
-
-
     public void playTrigger(View view){
 
-        SharedPreferences sharedPref = this.getSharedPreferences("Music",Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = this.getSharedPreferences("MusicBox",Context.MODE_PRIVATE);
 
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("songIndex",wItem.getId());
         editor.apply();
-
-        //musicPlayerService.mp.reset();
-
 
 
         play.setVisibility(View.INVISIBLE);
@@ -255,16 +254,63 @@ public class NowPlaying extends Activity{
         seekUpdation();
     }
 
-
-
-
     public void pauseTrigger(View view){
         play.setVisibility(View.VISIBLE);
         pause.setVisibility(View.INVISIBLE);
         musicPlayerService.pauseMusic();
     }
 
+    public void nextTrigger(View view){
+        SharedPreferences sharedPreferences = getSharedPreferences("MusicBox",Context.MODE_PRIVATE);
+        String songId = sharedPreferences.getString("songIndex","");
+        Log.i("SHAREPREF>>>>>>>>>>>>",songId);
+        if(!songId.equals("")) {
+            mySongIndex = getCategoryPos(songId);
+            //wItem = allSongsList.get(mySongIndex);
+            //wItem = sqlActivity.getSongItem(songId);
+        }else{
+            mySongIndex = 0;
+            //wItem = allSongsList.get(mySongIndex);
+        }
+        if(mySongIndex < allSongsList.size()) {
+            mySongIndex += 1;
+        }else{
 
+        }
+        wItem = allSongsList.get(mySongIndex);
+        Log.i("song new index ",allSongsList.get(mySongIndex).getId());
+        songName.setText(wItem.getTitle());
+        albumName.setText(wItem.getAlbum());
+        Log.i("NEW SONG",wItem.getTitle());
+        firstPlay();
+        playTrigger(view);
+    }
+
+    public void prevTrigger(View view){
+        SharedPreferences sharedPreferences = getSharedPreferences("MusicBox",Context.MODE_PRIVATE);
+        String songId = sharedPreferences.getString("songIndex","");
+        Log.i("SHAREPREF>>>>>>>>>>>>",songId);
+        if(!songId.equals("")) {
+            mySongIndex = getCategoryPos(songId);
+            //wItem = allSongsList.get(mySongIndex);
+        }else{
+            mySongIndex = 0;
+            //wItem = allSongsList.get(mySongIndex);
+        }
+
+        if(mySongIndex <= 0){
+
+        }else {
+            mySongIndex -= 1;
+        }
+        wItem = allSongsList.get(mySongIndex);
+        Log.i("song new index ",allSongsList.get(mySongIndex).getId());
+        songName.setText(wItem.getTitle());
+        albumName.setText(wItem.getAlbum());
+        Log.i("NEW SONG",wItem.getTitle());
+        firstPlay();
+        playTrigger(view);
+    }
 
     public void seekUpdation(){
         runOnUiThread(new Runnable() {
@@ -273,13 +319,13 @@ public class NowPlaying extends Activity{
 
                 float value = ((float) musicPlayerService.mp.getCurrentPosition()/(float) musicPlayerService.mp.getDuration());
                 //seeker.setProgress(musicPlayerService.mp.getCurrentPosition());
-                Log.i("seekbar now", String.valueOf(musicPlayerService.mp.getCurrentPosition()));
-                Log.i("seekbar total", String.valueOf(musicPlayerService.mp.getDuration()));
-                Log.i("seekbar div", String.valueOf(value));
+                //Log.i("seekbar now", String.valueOf(musicPlayerService.mp.getCurrentPosition()));
+                //Log.i("seekbar total", String.valueOf(musicPlayerService.mp.getDuration()));
+                //Log.i("seekbar div", String.valueOf(value));
 
 
                 int progress = (int)(value * 1000);
-                Log.i("seekbar", String.valueOf(progress));
+                //Log.i("seekbar", String.valueOf(progress));
                 seeker.setProgress(progress);
                 runTime.setText(convertMilli(musicPlayerService.mp.getCurrentPosition()));
 
@@ -419,7 +465,6 @@ public class NowPlaying extends Activity{
         //NowPlaying.albumName.setText(wItem.getAlbum());
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -442,4 +487,20 @@ public class NowPlaying extends Activity{
         initialLoad = false;
 
     }
+
+    private int getCategoryPos(String id) {
+        Log.i("passed ID",id);
+        Log.i("Total lenght",String.valueOf(allSongsList.size()));
+
+        for (int i = 0; i < allSongsList.size() ; i++) {
+            if (allSongsList.get(i).getId().equals(id)) {
+                return i;
+            }
+
+        }
+
+        return -1;
+    }
+
+
 }

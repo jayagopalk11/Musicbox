@@ -29,15 +29,17 @@ public class MusicPlayerSrvc extends Service {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 Log.i("ONCOMPLETE","Running");
-                mp.pause();
+                //mp.pause();
                 //mp.stop();
                 mp.reset();
                 setMpResourcePath();
+                playMusic();
+                pauseMusic();
                 isPaused = false;
                 isPlaying = false;
                 NowPlaying.play.setVisibility(View.VISIBLE);
                 NowPlaying.pause.setVisibility(View.INVISIBLE);
-                NowPlaying.seeker.setProgress(0);
+                NowPlaying.seeker.setProgress(1);
 
             }
         });
