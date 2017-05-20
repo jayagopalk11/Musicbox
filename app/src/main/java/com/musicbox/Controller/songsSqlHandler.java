@@ -152,4 +152,31 @@ public class songsSqlHandler extends SQLiteOpenHelper {
 
     }
 
+    public songItem getSongItem(String id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        songItem mySong = new songItem(null,null,null,null,null,null,null,null);
+        Cursor cursor;
+        Log.i("SONG ID",id);
+        cursor = db.rawQuery("SELECT * from "+TABLE_SONGS+" where "+COLUMN_ID+"=\""+id+"\"",null);
+        while(cursor.moveToNext()){
+            mySong = new songItem(cursor.getString(0),cursor.getString(1),cursor.getString(2),cursor.getString(3),
+                    cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getString(7));
+        }
+        cursor.close();
+        return mySong;
+    }
+
+    public songItem getFirstSong(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        songItem mySong = new songItem(null,null,null,null,null,null,null,null);
+        Cursor cursor;
+
+        cursor = db.rawQuery("SELECT * from "+TABLE_SONGS+" where 1 LIMIT 1",null);
+        while(cursor.moveToNext()){
+            mySong = new songItem(cursor.getString(0),cursor.getString(1),cursor.getString(2),cursor.getString(3),
+                    cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getString(7));
+        }
+        cursor.close();
+        return mySong;
+    }
 }

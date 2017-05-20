@@ -98,7 +98,7 @@
         android:layout_height="320dp"
         android:layout_above="@+id/playerButtons"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="75dp"
         android:background="@null"
         android:padding="60dp"
         circleSeek:rotation="180"
@@ -108,20 +108,22 @@
 
     <TextView
         android:id="@+id/songName"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/library"
         android:textColor="#FFFFFF"
+        android:textAlignment="center"
         android:textSize="20dp"
         android:layout_centerHorizontal="true"
         android:text="Song Name" />
 
     <TextView
         android:id="@+id/albumName"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/songName"
         android:textColor="#FFFFFF"
+        android:textAlignment="center"
         android:textSize="16dp"
         android:layout_centerHorizontal="true"
         android:text="Album" />

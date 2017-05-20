@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void getPlaylistOperation(){
 
-        if(!doesDatabaseExist(this,"music")) {
+        if(!doesDatabaseExist(this,"MusicBoxPlaylist5.db")) {
 
             final playlistGenerator playlistGenerator = new playlistGenerator(this);
             while(!songsListed){

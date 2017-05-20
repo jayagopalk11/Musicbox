@@ -5,6 +5,7 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -41,9 +42,17 @@ import java.util.ArrayList;
 
 public class NowPlaying extends Activity{
 
+
+
     public static ArrayList<songItem> allSongsList;
     public static ArrayList<albumArtistItem> allAlbumList;
     public static ArrayList<albumArtistItem> allArtistList;
+    public static ArrayList<songItem> albumList;
+    public static ArrayList<songItem> artistList;
+
+    public static Boolean songsFlag;
+    public static Boolean albumsFlag;
+    public static Boolean artistsFlag;
 
     Intent musicPlayerSrvc;
 
@@ -55,7 +64,7 @@ public class NowPlaying extends Activity{
     public static TextView albumName;
     MusicPlayerSrvc playerService;
     Boolean isBound = false;
-    public CircularSeek seeker;
+    public static CircularSeek seeker;
     public MusicPlayerSrvc musicPlayerService;
     public ImageView myImage;
     private boolean success = false;
@@ -63,20 +72,14 @@ public class NowPlaying extends Activity{
     Runnable run;
     public static TextView runTime;
     public static TextView leftTime;
+    public boolean initialLoad;
+
+
 
     Handler seekHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            /*
-            seeker.setProgress(60);
 
-            //seeker.setProgress(musicPlayerService.mp.getCurrentPosition());
-            Log.i("seekbar", String.valueOf(musicPlayerService.mp.getCurrentPosition()));
-            Log.i("seekbar", "runnable running");
-            runTime.setText(convertMilli(musicPlayerService.mp.getCurrentPosition()));
-
-            leftTime.setText(convertMilli(musicPlayerService.mp.getDuration()-musicPlayerService.mp.getCurrentPosition()));
-            */
         }
     };
 
@@ -99,6 +102,20 @@ public class NowPlaying extends Activity{
         prevSong = (ImageButton)findViewById(R.id.previousButton);
         runTime = (TextView)findViewById(R.id.runTime);
         leftTime = (TextView)findViewById(R.id.leftTime);
+        sqlActivity = new songsSqlHandler(this, null, null, 1);
+        initialLoad = true;
+
+
+        SharedPreferences sharedPreferences = getSharedPreferences("MusicBox",Context.MODE_PRIVATE);
+        String songId = sharedPreferences.getString("songIndex","");
+        Log.i("SHAREPREF>>>>>>>>>>>>",songId);
+        if(!songId.equals("")) {
+            wItem = sqlActivity.getSongItem(songId);
+        }else{
+            wItem = sqlActivity.getFirstSong();
+        }
+        songName.setText(wItem.getTitle());
+        albumName.setText(wItem.getAlbum());
 
 
         musicPlayerSrvc = new Intent(this,MusicPlayerSrvc.class);
@@ -107,20 +124,40 @@ public class NowPlaying extends Activity{
 
         myImage = (ImageView) findViewById(R.id.albumArtImg);
 
-        Bitmap image = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.music_image);
+        //Bitmap image = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.music_image);
 
-        Bitmap myBitmap = getCircleBitmap(image);
-        myImage.setImageBitmap(myBitmap);
-
+        //Bitmap myBitmap = getCircleBitmap(image);
+        //myImage.setImageBitmap(myBitmap);
+        drawAlbumArt();
         seeker = (CircularSeek) findViewById(R.id.cis);
         seeker.setStartAngle(30);
         seeker.setSweepAngle(295);
+        seeker.setMax(1000);
         seeker.setTouchInSide(true);
 
         seeker.setOnSeekArcChangeListener(new CircularSeek.OnCircleSeekChangeListener() {
             @Override
             public void onProgressChanged(CircularSeek seeker, int progress, boolean fromUser) {
                 Log.i("Progress ###",String.valueOf(progress));
+                if(fromUser) {
+
+                    int curDuration = musicPlayerService.mp.getDuration();
+                    Log.i("CurrentDuration",String.valueOf(curDuration));
+                    int val = (curDuration/1000)*progress;
+                    Log.i("ProgressVal",String.valueOf(val));
+                    if(musicPlayerService.mp.isPlaying()) {
+                        musicPlayerService.mp.pause();
+                        musicPlayerService.mp.seekTo(val);
+                        musicPlayerService.mp.start();
+                        play.setVisibility(View.INVISIBLE);
+                        pause.setVisibility(View.VISIBLE);
+                    }else{
+                        musicPlayerService.mp.pause();
+                        musicPlayerService.mp.seekTo(val);
+                        play.setVisibility(View.VISIBLE);
+                        pause.setVisibility(View.INVISIBLE);
+                    }
+                }
             }
 
             @Override
@@ -133,6 +170,22 @@ public class NowPlaying extends Activity{
                 //Toast.makeText(getApplicationContext(),"test", Toast.LENGTH_SHORT).show();
             }
         });
+
+        run = new Runnable() {
+            @Override
+            public void run() {
+                //Log.i("seekbar", "runnable intialised");
+                seekUpdation();
+            }
+        };
+
+        SharedPreferences sharedPref = this.getSharedPreferences("Music",Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("songIndex",wItem.getId());
+        editor.apply();
+
+
 
     }
 
@@ -173,30 +226,32 @@ public class NowPlaying extends Activity{
 
 
     public void playTrigger(View view){
+
+        SharedPreferences sharedPref = this.getSharedPreferences("Music",Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("songIndex",wItem.getId());
+        editor.apply();
+
+        //musicPlayerService.mp.reset();
+
+
+
         play.setVisibility(View.INVISIBLE);
         pause.setVisibility(View.VISIBLE);
         musicPlayerService.playMusic();
 
-        /*
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Log.i("seekbar", "runnable intialised");
 
-                    seekUpdation();
-
-            }
-        });*/
-        Toast.makeText(this,"thread strt",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"thread strt",Toast.LENGTH_SHORT).show();
 
         run = new Runnable() {
             @Override
             public void run() {
-                Log.i("seekbar", "runnable intialised");
-
+                //Log.i("seekbar", "runnable intialised");
                 seekUpdation();
             }
         };
+        drawAlbumArt();
         seekUpdation();
     }
 
@@ -210,11 +265,12 @@ public class NowPlaying extends Activity{
     }
 
 
+
     public void seekUpdation(){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                seeker.setProgress(60);
+
                 float value = ((float) musicPlayerService.mp.getCurrentPosition()/(float) musicPlayerService.mp.getDuration());
                 //seeker.setProgress(musicPlayerService.mp.getCurrentPosition());
                 Log.i("seekbar now", String.valueOf(musicPlayerService.mp.getCurrentPosition()));
@@ -222,7 +278,7 @@ public class NowPlaying extends Activity{
                 Log.i("seekbar div", String.valueOf(value));
 
 
-                int progress = (int)(value * 100);
+                int progress = (int)(value * 1000);
                 Log.i("seekbar", String.valueOf(progress));
                 seeker.setProgress(progress);
                 runTime.setText(convertMilli(musicPlayerService.mp.getCurrentPosition()));
@@ -231,8 +287,11 @@ public class NowPlaying extends Activity{
             }
         });
 
-        seekHandler.sendEmptyMessage(0);
-        seekHandler.postDelayed(run, 1000);
+
+        if(musicPlayerService.mp.isPlaying()) {
+            seekHandler.sendEmptyMessage(0);
+            seekHandler.postDelayed(run, 100);
+        }
     }
 
     public String convertMilli(int milli){
@@ -270,20 +329,19 @@ public class NowPlaying extends Activity{
                 play.setVisibility(View.INVISIBLE);
                 pause.setVisibility(View.VISIBLE);
                 seeker.setProgress(musicPlayerService.mp.getCurrentPosition());
-                Toast.makeText(getApplication().getApplicationContext(),String.valueOf(musicPlayerService.mp.getDuration()),Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplication().getApplicationContext(),String.valueOf(musicPlayerService.mp.getDuration()),Toast.LENGTH_SHORT).show();
 
             }else{
                 play.setVisibility(View.VISIBLE);
                 pause.setVisibility(View.INVISIBLE);
-
-
-                //playFunction();
-
             }
-
-            //songName.setText(items[songId].items);
-            //albumName.setText(items[songId].desc);
-            //drawAlbumArt();
+            if(musicPlayerService.mp.isPlaying()){
+                initialLoad = false;
+                drawAlbumArt();
+                seekUpdation();
+            }
+            musicPlayerService.mp.reset();
+            firstPlay();
         }
 
         @Override
@@ -296,10 +354,11 @@ public class NowPlaying extends Activity{
         Intent lib = new Intent(this,MusicLibrary.class);
         startActivity(lib);
     }
-    /*
+
     private void drawAlbumArt(){
-        Bitmap image = BitmapFactory.decodeFile(items[songId].arr);
+        Bitmap image;
         try{
+             image = BitmapFactory.decodeFile(wItem.getAlbumArt());
             if((image.getHeight() > 0)&&(image.getWidth()>0)){
 
             }
@@ -314,16 +373,31 @@ public class NowPlaying extends Activity{
             myImage.setImageBitmap(myBitmap);
         }catch (Exception e){
             Toast.makeText(this,"Unable to set album art",Toast.LENGTH_SHORT).show();
+            image = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.music_image);
+            Bitmap myBitmap = getCircleBitmap(image);
+            myImage.setImageBitmap(myBitmap);
         }
     }
-        */
-    public void playFunction(){
+
+    public void firstPlay(){
+
+        musicPlayerService.mp.pause();
+
+        Log.i("mp stat","mp paused from playlist");
+        //musicPlayerService.mp.stop();
+        //Log.i("mp stat","mp stopped from playlist");
+        musicPlayerService.mp.reset();
+        //Log.i("mp stat","mp reset from playlist");
+        musicPlayerService.isPaused = false;
+        musicPlayerService.isPlaying = false;
+
+
         try {
             Uri trackUri = ContentUris.withAppendedId(
                     android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                     Long.valueOf(wItem.getId()));
 
-            musicPlayerService.mp.setDataSource(getApplicationContext(), trackUri);
+            musicPlayerService.mp.setDataSource(this, trackUri);
             success = true;
         }catch (Exception e){
             Log.i("Exception","Exception handled"+e.toString());
@@ -334,11 +408,15 @@ public class NowPlaying extends Activity{
                         MediaStore.Audio.Media.INTERNAL_CONTENT_URI,
                         Long.valueOf(wItem.getId()));
 
-                musicPlayerService.mp.setDataSource(getApplicationContext(), trackUri);
+                musicPlayerService.mp.setDataSource(this, trackUri);
             } catch (Exception e) {
                 Log.i("Exception", "Exception handled" + e.toString());
             }
         }
+
+        //musicPlayerService.playMusic();
+        //NowPlaying.songName.setText(wItem.getTitle());
+        //NowPlaying.albumName.setText(wItem.getAlbum());
     }
 
 
@@ -354,5 +432,14 @@ public class NowPlaying extends Activity{
         super.onResume();
         musicPlayerSrvc = new Intent(this,MusicPlayerSrvc.class);
         bindService(musicPlayerSrvc ,musicBoxConnection, Context.BIND_AUTO_CREATE);
+        Log.i("ON RESUME",">>>>>>>>>>>>>>");
+        Log.i("LOG STATUS",String.valueOf(initialLoad));
+        if(!initialLoad){
+            drawAlbumArt();
+            seekUpdation();
+        }
+
+        initialLoad = false;
+
     }
 }

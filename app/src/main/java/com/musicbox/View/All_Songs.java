@@ -37,6 +37,7 @@ public class All_Songs extends Fragment implements SongListAdapter.ItemClickCall
     Boolean isBound = false;
     private RecyclerView Rec;
     private SongListAdapter myAdapter;
+
     public All_Songs() {
         // Required empty public constructor
     }
@@ -59,6 +60,8 @@ public class All_Songs extends Fragment implements SongListAdapter.ItemClickCall
         myAdapter.setItemClickCallback(this);
         Rec.setAdapter(myAdapter);
 
+
+
         return rootView;
     }
 
@@ -66,10 +69,71 @@ public class All_Songs extends Fragment implements SongListAdapter.ItemClickCall
     @Override
     public void onImageClick(int p) {
         songItem i = NowPlaying.allSongsList.get(p);
-        Toast.makeText(getActivity().getApplicationContext(),i.getId(),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getActivity().getApplicationContext(),i.getId(),Toast.LENGTH_SHORT).show();
 
         Boolean success = false;
-        SharedPreferences sharedPref = getContext().getSharedPreferences("Music",Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getContext().getSharedPreferences("MusicBox",Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("songIndex",i.getId());
+        Log.i("SHAREPREF",i.getId());
+        editor.apply();
+        NowPlaying.wItem = i;
+        musicPlayerService.mp.pause();
+
+        Log.i("mp stat","mp paused from playlist");
+        musicPlayerService.mp.stop();
+        Log.i("mp stat","mp stopped from playlist");
+        musicPlayerService.mp.reset();
+        Log.i("mp stat","mp reset from playlist");
+        musicPlayerService.isPaused = false;
+        musicPlayerService.isPlaying = false;
+
+
+        try {
+            Uri trackUri = ContentUris.withAppendedId(
+                    android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                    Long.valueOf(i.getId()));
+
+            musicPlayerService.mp.setDataSource(getActivity().getApplicationContext(), trackUri);
+            success = true;
+        }catch (Exception e){
+            Log.i("Exception","Exception handled"+e.toString());
+        }
+        if(!success) {
+            try {
+                Uri trackUri = ContentUris.withAppendedId(
+                        MediaStore.Audio.Media.INTERNAL_CONTENT_URI,
+                        Long.valueOf(i.getId()));
+
+                musicPlayerService.mp.setDataSource(getActivity().getApplicationContext(), trackUri);
+            } catch (Exception e) {
+                Log.i("Exception", "Exception handled" + e.toString());
+            }
+        }
+
+        musicPlayerService.playMusic();
+        NowPlaying.songName.setText(i.getTitle());
+        NowPlaying.albumName.setText(i.getAlbum());
+        //new NowPlaying().seekUpdation();
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        getActivity().unbindService(musicBoxConnection);
+        super.onDestroyView();
+    }
+
+
+
+    @Override
+    public void onItemClick(int p) {
+        songItem i = NowPlaying.allSongsList.get(p);
+        //Toast.makeText(getActivity().getApplicationContext(),i.getId(),Toast.LENGTH_SHORT).show();
+
+        Boolean success = false;
+        SharedPreferences sharedPref = getContext().getSharedPreferences("MusicBox",Context.MODE_PRIVATE);
 
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("songIndex",i.getId());
@@ -111,20 +175,7 @@ public class All_Songs extends Fragment implements SongListAdapter.ItemClickCall
         musicPlayerService.playMusic();
         NowPlaying.songName.setText(i.getTitle());
         NowPlaying.albumName.setText(i.getAlbum());
-
-
-    }
-
-    @Override
-    public void onDestroyView() {
-        getActivity().unbindService(musicBoxConnection);
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onItemClick(int p) {
-        songItem i = NowPlaying.allSongsList.get(p);
-        Toast.makeText(getContext(),i.getId(),Toast.LENGTH_SHORT).show();
+        //new NowPlaying().seekUpdation();
     }
 
     ServiceConnection musicBoxConnection = new ServiceConnection() {
