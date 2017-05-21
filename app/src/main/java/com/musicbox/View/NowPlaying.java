@@ -188,9 +188,6 @@ public class NowPlaying extends Activity{
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("songIndex",wItem.getId());
         editor.apply();
-
-
-
     }
 
     private Bitmap getCircleBitmap(Bitmap bitmap) {
@@ -235,11 +232,9 @@ public class NowPlaying extends Activity{
         editor.putString("songIndex",wItem.getId());
         editor.apply();
 
-
         play.setVisibility(View.INVISIBLE);
         pause.setVisibility(View.VISIBLE);
         musicPlayerService.playMusic();
-
 
         //Toast.makeText(this,"thread strt",Toast.LENGTH_SHORT).show();
 
@@ -460,9 +455,6 @@ public class NowPlaying extends Activity{
             }
         }
 
-        //musicPlayerService.playMusic();
-        //NowPlaying.songName.setText(wItem.getTitle());
-        //NowPlaying.albumName.setText(wItem.getAlbum());
     }
 
     @Override
@@ -502,5 +494,8 @@ public class NowPlaying extends Activity{
         return -1;
     }
 
-
+    public void openEq(View view){
+        Intent eq = new Intent(this,Equaliser.class);
+        startActivity(eq);
+    }
 }

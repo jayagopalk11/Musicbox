@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.media.audiofx.Equalizer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
@@ -23,6 +24,8 @@ public class MusicPlayerSrvc extends Service {
     public boolean isPaused = false;
     private final IBinder musicBinder = new customLocalBinder();
     private Boolean success;
+
+    public Equalizer myEq;
 
     public MusicPlayerSrvc() {
         mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -132,4 +135,15 @@ public class MusicPlayerSrvc extends Service {
         return isPlaying;
     }
 
+    public short getEqNumberOfBands(){
+        myEq = new Equalizer(0, mp.getAudioSessionId());
+        short numberOfBands = myEq.getNumberOfBands();
+        return numberOfBands;
+    }
+
+    public short[] getBandLevelRange(){
+        myEq = new Equalizer(0, mp.getAudioSessionId());
+        short[] bandLevelRange = myEq.getBandLevelRange();
+        return bandLevelRange;
+    }
 }

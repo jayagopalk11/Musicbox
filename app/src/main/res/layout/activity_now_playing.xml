@@ -150,4 +150,13 @@
         android:layout_below="@+id/albumArtImg"
         android:layout_alignEnd="@+id/library" />
 
+    <Button
+        android:id="@+id/EQ"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:onClick="openEq"
+        android:text="Equalizer" />
+
 </RelativeLayout>
