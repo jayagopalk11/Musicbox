@@ -12,9 +12,11 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +33,7 @@ public class Equaliser extends AppCompatActivity {
     Boolean isBound = false;
     Switch enabler;
     List<SeekBar> allSeeks = new ArrayList<SeekBar>();
+    Spinner presetValues;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,17 +53,30 @@ public class Equaliser extends AppCompatActivity {
                         allSeeks.get(i).setEnabled(true);
                     }
                     musicPlayerService.myEq.setEnabled(true);
+                    presetValues.setEnabled(true);
                 }else{
                     for(int i=0; i < allSeeks.size(); i++){
                         allSeeks.get(i).setEnabled(false);
                     }
                     musicPlayerService.myEq.setEnabled(false);
+                    presetValues.setEnabled(false);
                     Toast.makeText(getApplicationContext(),"Turned off",Toast.LENGTH_SHORT).show();
                 }
 
             }
         });
 
+        presetValues = (Spinner) findViewById(R.id.presets);
+        List<String> categories = new ArrayList<String>();
+        categories.add("Automobile");
+        categories.add("Business Services");
+        categories.add("Computers");
+        categories.add("Education");
+        categories.add("Personal");
+        categories.add("Travel");
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        presetValues.setAdapter(dataAdapter);
     }
 
 
