@@ -14,6 +14,7 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
@@ -37,6 +38,9 @@ import com.musicbox.Model.songItem;
 import com.musicbox.R;
 
 import java.util.ArrayList;
+
+import static com.musicbox.View.Equaliser.enabler;
+import static com.musicbox.View.Equaliser.presetValues;
 
 
 public class NowPlaying extends Activity{
@@ -383,6 +387,19 @@ public class NowPlaying extends Activity{
             }
             musicPlayerService.mp.reset();
             firstPlay();
+
+            AudioManager audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            if(audio.isWiredHeadsetOn()){
+                Toast.makeText(getApplicationContext(),"Headset On",Toast.LENGTH_SHORT).show();
+                enabler.setEnabled(true);
+                presetValues.setEnabled(true);
+
+            }else{
+                Toast.makeText(getApplicationContext(),"Headset Off",Toast.LENGTH_SHORT).show();
+                enabler.setEnabled(false);
+                presetValues.setEnabled(false);
+            }
+
         }
 
         @Override

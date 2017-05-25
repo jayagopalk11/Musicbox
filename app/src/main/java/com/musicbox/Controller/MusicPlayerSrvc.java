@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.media.audiofx.BassBoost;
 import android.media.audiofx.Equalizer;
 import android.net.Uri;
 import android.os.Binder;
@@ -17,6 +18,8 @@ import android.widget.Toast;
 import com.musicbox.View.NowPlaying;
 
 import java.io.IOException;
+
+import static com.musicbox.View.Equaliser.enabler;
 
 public class MusicPlayerSrvc extends Service {
     public MediaPlayer mp = new MediaPlayer();
@@ -63,6 +66,23 @@ public class MusicPlayerSrvc extends Service {
 
     public void playMusic(){
         Log.i("flag status: ",String.valueOf(isPlaying));
+
+
+        BassBoost bassBoost = new BassBoost(0, mp.getAudioSessionId());
+
+        BassBoost.Settings bassBoostSettingTemp =  bassBoost.getProperties();
+        BassBoost.Settings bassBoostSetting = new BassBoost.Settings(bassBoostSettingTemp.toString());
+
+        bassBoost.setProperties(bassBoostSetting);
+
+        bassBoost.setStrength((short) 50);
+
+        if(enabler.isChecked()){
+            bassBoost.setEnabled(true);
+        }else{
+            bassBoost.setEnabled(false);
+        }
+
 
         if(!isPlaying) {
             if(!isPaused) {

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Resources;
+import android.media.audiofx.BassBoost;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,9 +32,9 @@ public class Equaliser extends AppCompatActivity {
 
     MusicPlayerSrvc musicPlayerService;
     Boolean isBound = false;
-    Switch enabler;
+    public static Switch enabler;
     List<SeekBar> allSeeks = new ArrayList<SeekBar>();
-    Spinner presetValues;
+    public static Spinner presetValues;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,9 @@ public class Equaliser extends AppCompatActivity {
         bindService(n,musicBoxConnection, Context.BIND_AUTO_CREATE);
         enabler = (Switch)findViewById(R.id.enableEq);
         enabler.setChecked(false);
+
+
+
         enabler.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -77,6 +81,9 @@ public class Equaliser extends AppCompatActivity {
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         presetValues.setAdapter(dataAdapter);
+
+
+
     }
 
 
@@ -196,6 +203,11 @@ public class Equaliser extends AppCompatActivity {
 
             mLinearLayout.addView(seekBarRowLayout);
             musicPlayerService.myEq.setEnabled(true);
+
+            int presetCount = musicPlayerService.myEq.getNumberOfPresets();
+            for(short m = 0; m<presetCount ; m++) {
+                Log.i("preset name", musicPlayerService.myEq.getPresetName(m));
+            }
         }
 
     }
